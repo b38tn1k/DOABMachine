@@ -1,6 +1,8 @@
 #ifndef EventSequence_h
 #define EventSequence_h
 
+#define POLY 8
+
 #include "MMInterface.h"
 
 //Trigger sequence events, play and record. Stores all note events for Event within Sequence:
@@ -10,22 +12,17 @@
 //Velocity
 //Next step
 
-
 class EventSequence : public MMInterface {
   private:
-    // notes to be triggered at each sequence step
-    typedef struct noteEvent{
-      uint8_t note;
-      uint8_t channel;
-      uint8_t velocity;
-      uint8_t bank;
-      noteEvent *next;
-    } noteEvent;
     // sequence step
     typedef struct stepEvent{
       uint8_t sequence_number;
-      noteEvent *noteHead, *noteTail, *noteEvents;
+      uint8_t note[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+      uint8_t channel[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+      uint8_t velocity[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+      uint8_t bank[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
       stepEvent *next;
+      stepEvent *prev;
     } stepEvent;
   public:
     EventSequence(uint8_t interface) : MMInterface(interface){}
