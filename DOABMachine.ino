@@ -12,19 +12,23 @@
 
 Instrument instrument(VS1053_BANK_DRUMS1, VS1053_RX);
 EventSequence sequencer(VS1053_RX);
-uint8_t sequence_length = 16;
+Timer timer(500);
 
 void setup() {
   Serial.begin(9600);
-  sequencer.sequence_length = 16;
+  sequencer.sequence_length = 64;
 }
 
 void loop() {
-  delay(500);
-  sequencer.updateCurrentStep();
-  Serial.print(sequencer.current->sequence_number);
-  if (sequencer.current->sequence_number == 6 ) {
-    sequencer.addNoteEvent2CurrentStep(1, 1, 1, 1);
+  if (timer.tick() == true) {
+    sequencer.updateCurrentStep();
+    Serial.print(sequencer.current->sequence_number);
+    if (sequencer.current->sequence_number == 6 ) {
+      sequencer.addNoteEvent2CurrentStep(1, 1, 1, 1);
+    }
+    if (sequencer.current->note[0] != NULL) {
+      Serial.print(sequencer.current->note[0]);
+    }
+    Serial.println();
   }
-  Serial.println();
 }

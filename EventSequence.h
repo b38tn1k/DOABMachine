@@ -18,9 +18,9 @@ class EventSequence : public MMInterface {
     typedef struct stepEvent{
       uint8_t sequence_number;
       uint8_t note[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-      uint8_t channel[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+//      uint8_t channel[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
       uint8_t velocity[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-      uint8_t bank[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+//      uint8_t bank[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
       stepEvent *next;
       stepEvent *prev;
     } stepEvent;

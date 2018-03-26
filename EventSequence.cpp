@@ -41,8 +41,8 @@ void EventSequence::addNoteEvent2CurrentStep(uint8_t _note, uint8_t _velocity, u
     if (current->note[i] == NULL) {
       current->note[i] = _note;
       current->velocity[i] = _velocity;
-      current->channel[i] = _channel;
-      current->bank[i] = _bank;
+//      current->channel[i] = _channel;
+//      current->bank[i] = _bank;
       break;
     }
   }
