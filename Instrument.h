@@ -20,10 +20,7 @@ class Instrument : public MMInterface {
     uint8_t volume;
     uint8_t velocity;
   public:
-    Instrument(uint8_t _bank, uint8_t interface)
-      : MMInterface(interface),
-      bank(_bank)
-    {velocity = 100; channel = 0; reverbLevel = 10; reverbDecay = 10;}
+    Instrument(uint8_t _bank) : bank(_bank) {velocity = 100; channel = 0; reverbLevel = 10; reverbDecay = 10;}
     void setReverbLevel(uint8_t reverbLevel);
     void setReverbDecay(uint8_t reverbDecay);
     void setVolume(uint8_t volume);
@@ -32,6 +29,7 @@ class Instrument : public MMInterface {
     void setInstrument(uint8_t instrument);
     void playNote(uint8_t note);
     void stopNote(uint8_t note);
+    void writeDefaults();
 };
 
 #endif

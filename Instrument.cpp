@@ -40,3 +40,9 @@ void Instrument::stopNote(uint8_t note) {
   midiNoteOff(channel, note, velocity);
 }
 
+void Instrument::writeDefaults() {
+  midiSetChannelBank(0, bank);
+  midiSetInstrument(0, 0);
+  midiSetChannelVolume(0, 127);
+}
+

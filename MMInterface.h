@@ -7,15 +7,19 @@
 //Communicates with Music Maker via SoftwareSerial 
 
 
-class MMInterface: public SoftwareSerial {
+class MMInterface {
   public:
-    MMInterface(uint8_t transmitPin) : SoftwareSerial(0, transmitPin) {}
+    MMInterface(){}
     void midiSetInstrument(uint8_t chan, uint8_t inst);
     void midiSetChannelVolume(uint8_t chan, uint8_t vol);
     void midiSetChannelReverb(uint8_t chan, uint8_t decay, uint8_t level);
     void midiSetChannelBank(uint8_t chan, uint8_t bank);
     void midiNoteOn(uint8_t chan, uint8_t n, uint8_t vel);
     void midiNoteOff(uint8_t chan, uint8_t n, uint8_t vel);
+    void attachInterface(SoftwareSerial * interface);
+  private:
+    SoftwareSerial * myserial;
+    
 };
 
 #endif

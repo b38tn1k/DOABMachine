@@ -58,10 +58,10 @@ void EventSequence::addNote2CurrentStep(uint8_t _note) {
 void EventSequence::playAllNotesAtCurrentStep() {
   int i;
   for (i = 0; i < POLY; i++) {
-    if (current->notes[bank][i] == NULL) {
+    if (current->notes[bank][i] == 0) {
       break;
     } else {
-     playNote(i); 
+     playNote(current->notes[bank][i]); 
     }
   }
 }
@@ -72,7 +72,7 @@ void EventSequence::stopAllNotesAtCurrentStep() {
     if (current->notes[bank][i] == NULL) {
       break;
     } else {
-     stopNote(i); 
+     stopNote(current->notes[bank][i]); 
     }
   }
 }

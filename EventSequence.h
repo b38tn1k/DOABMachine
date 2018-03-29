@@ -14,7 +14,7 @@ class EventSequence : public Instrument{ // could I just inherit timer also?
     // sequence step
     typedef struct stepEvent{
       uint8_t sequenceNumber;
-      uint8_t notes[2][POLY] = {{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}};
+      uint8_t notes[2][POLY] = {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}};
       stepEvent *next;
       stepEvent *prev; // for reverse
     } stepEvent;
@@ -25,7 +25,7 @@ class EventSequence : public Instrument{ // could I just inherit timer also?
     void stopAllNotesAtCurrentStep();
   public:
     uint8_t sequence_length;
-    EventSequence(uint8_t MIDIbank, uint8_t interface) : Instrument(MIDIbank, interface){bank = 0; forwards = true;}
+    EventSequence(uint8_t MIDIbank) : Instrument(MIDIbank){bank = 0; forwards = true;}
     void step();
     void toggleBank();
     stepEvent *head, *tail, *current;

@@ -17,12 +17,15 @@ const char patchNames[][21] PROGMEM = {"High Q","Slap","Scratch Push [EXC 7]","S
 // Serial RX Pin for VS1053
 #define VS1053_RX  2
 
-EventSequence sequencer(VS1053_BANK_DRUMS1, VS1053_RX  );
+SoftwareSerial myserial(0, 2);
+
+EventSequence sequencer(VS1053_BANK_DRUMS1);
 Timer timer(500);
 
 void setup() {
   Serial.begin(9600);
-  myserial.begin(9600);
+  myserial.begin(31250);
+  sequencer.attachInterface(& myserial);
   sequencer.sequence_length = 64;
 }
 
@@ -34,9 +37,21 @@ void loop() {
     //TEST!!
     if (sequencer.current->sequenceNumber == 0 || sequencer.current->sequenceNumber % 4 == 0) {
       sequencer.addNote2CurrentStep(36); //kik?
+      sequencer.addNote2CurrentStep(35); //kik?
     }
     if (sequencer.current->sequenceNumber % 8 == 0) {
       sequencer.addNote2CurrentStep(40); //snare?
+      sequencer.addNote2CurrentStep(32); //snare?
+    }
+    if (sequencer.current->sequenceNumber % 2 == 0) {
+      sequencer.addNote2CurrentStep(42); //hat
+      sequencer.addNote2CurrentStep(70); //hat
+    }
+    if (sequencer.current->sequenceNumber % 9 == 0) {
+      sequencer.addNote2CurrentStep(76); //DJ
+    }
+    if (sequencer.current->sequenceNumber % 7 == 0) {
+      sequencer.addNote2CurrentStep(77); //DJ
     }
     // END TEST
   }
