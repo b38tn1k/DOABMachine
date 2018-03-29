@@ -31,3 +31,12 @@ void Instrument::setChannel(uint8_t _channel){
   channel = _channel;
   midiSetChannelBank(channel, bank);
 }
+
+void Instrument::playNote(uint8_t note) {
+  midiNoteOn(channel, note, velocity);
+}
+
+void Instrument::stopNote(uint8_t note) {
+  midiNoteOff(channel, note, velocity);
+}
+

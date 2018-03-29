@@ -1,8 +1,8 @@
 #include "EventSequence.h"
 
-void EventSequence::addStepEvent(uint8_t _sequence_number) {
+void EventSequence::addNewStepToTail(uint8_t _sequenceNumber) {
   stepEvent *temp = new stepEvent;
-  temp->sequence_number = _sequence_number;
+  temp->sequenceNumber = _sequenceNumber;
   temp->next = NULL;
   if (head == NULL) {
     temp->prev = NULL;
@@ -17,14 +17,15 @@ void EventSequence::addStepEvent(uint8_t _sequence_number) {
   temp = NULL;
 }
 
-void EventSequence::updateCurrentStep() {
+void EventSequence::step() {
   if (current == NULL) {
-    addStepEvent(1);
+    addNewStepToTail(1);
   } else {
-    uint8_t i = current->sequence_number;
+    stopAllNotesAtCurrentStep();
+    uint8_t i = current->sequenceNumber;
     if (i < sequence_length) {
       if (current->next == NULL) {
-        addStepEvent(++i);
+        addNewStepToTail(++i);
         current = tail;
       } else {
         current = current->next;
@@ -33,18 +34,45 @@ void EventSequence::updateCurrentStep() {
       current = head;  
     }
   }
+  playAllNotesAtCurrentStep();
 }
 
-void EventSequence::addNoteEvent2CurrentStep(uint8_t _note, uint8_t _velocity, uint8_t _channel, uint8_t _bank) {
+void EventSequence::toggleBank() {
+  if (bank == 0) { bank = 1;}
+  else {bank = 0;}
+}
+
+void EventSequence::addNote2CurrentStep(uint8_t _note) {
   int i;
   for (i = 0; i < POLY; i++) {
-    if (current->note[i] == NULL) {
-      current->note[i] = _note;
-      current->velocity[i] = _velocity;
-//      current->channel[i] = _channel;
-//      current->bank[i] = _bank;
+    if (current->notes[bank][i] == _note) {
+      break; // don't double record notes
+    }
+    if (current->notes[bank][i] == NULL) {
+      current->notes[bank][i] = _note;
       break;
     }
   }
 }
 
+void EventSequence::playAllNotesAtCurrentStep() {
+  int i;
+  for (i = 0; i < POLY; i++) {
+    if (current->notes[bank][i] == NULL) {
+      break;
+    } else {
+     playNote(i); 
+    }
+  }
+}
+
+void EventSequence::stopAllNotesAtCurrentStep() {
+  int i;
+  for (i = 0; i < POLY; i++) {
+    if (current->notes[bank][i] == NULL) {
+      break;
+    } else {
+     stopNote(i); 
+    }
+  }
+}

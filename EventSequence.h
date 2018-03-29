@@ -3,34 +3,33 @@
 
 #define POLY 8
 
-#include "MMInterface.h"
+#include "Instrument.h"
 
-//Trigger sequence events, play and record. Stores all note events for Event within Sequence:
-//Channel
-//Bank
-//Note
-//Velocity
-//Next step
+// a two bank sequencer with variable loop length,
+// can store <POLY> number of notes at each event
+// TODO:  REVERSE MODE | EDOM ESREVER
 
-class EventSequence : public MMInterface {
+class EventSequence : public Instrument{ // could I just inherit timer also?
   private:
     // sequence step
     typedef struct stepEvent{
-      uint8_t sequence_number;
-      uint8_t note[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-//      uint8_t channel[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-      uint8_t velocity[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
-//      uint8_t bank[POLY] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+      uint8_t sequenceNumber;
+      uint8_t notes[2][POLY] = {{NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}, {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}};
       stepEvent *next;
-      stepEvent *prev;
+      stepEvent *prev; // for reverse
     } stepEvent;
+    bool forwards;
+    uint8_t bank;
+    void addNewStepToTail(uint8_t _sequenceNumber);
+    void playAllNotesAtCurrentStep();
+    void stopAllNotesAtCurrentStep();
   public:
-    EventSequence(uint8_t interface) : MMInterface(interface){}
-    void addStepEvent(uint8_t _sequence_number);
-    void updateCurrentStep();
-    stepEvent *head, *tail, *current;
     uint8_t sequence_length;
-    void addNoteEvent2CurrentStep(uint8_t note, uint8_t velocity, uint8_t channel, uint8_t bank);    
+    EventSequence(uint8_t MIDIbank, uint8_t interface) : Instrument(MIDIbank, interface){bank = 0; forwards = true;}
+    void step();
+    void toggleBank();
+    stepEvent *head, *tail, *current;
+    void addNote2CurrentStep(uint8_t note);
 };
 
 #endif
