@@ -41,8 +41,9 @@ void Instrument::stopNote(uint8_t note) {
 }
 
 void Instrument::writeDefaults() {
-  midiSetChannelBank(0, bank);
-  midiSetInstrument(0, 0);
-  midiSetChannelVolume(0, 127);
+  midiSetChannelBank(channel, bank);
+  midiSetInstrument(channel, 0);
+  midiSetChannelVolume(channel, 127);
+  midiSetChannelReverb(channel, 0, 0);
 }
 
