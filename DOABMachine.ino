@@ -57,6 +57,13 @@ void loop() {
   }
   if (timer.tick() == true) {
     sequencer.step();
-    Serial.println(sequencer.current->sequenceNumber);
+//    Serial.println(sequencer.current->sequenceNumber);
+    //metronome for testing
+    if (sequencer.current->sequenceNumber % 16 == 0 || sequencer.current->sequenceNumber == 0) {
+      sequencer.playNote(31);
+    }
+    if (sequencer.current->sequenceNumber % 4 == 0) {
+      sequencer.playNote(33);
+    }
   }
 }
