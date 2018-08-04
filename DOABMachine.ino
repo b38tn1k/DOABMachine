@@ -16,9 +16,10 @@ const char patchNames[][21] PROGMEM = {"High Q","Slap","Scratch Push [EXC 7]","S
 #define CLK_OUT 8
 // Serial RX Pin for VS1053
 #define VS1053_RX  2
-SoftwareSerial myserial(0, VS1053_RX);
+SoftwareSerial vs1053Serial(0, VS1053_RX);
 // Interface
 Button pads[5];
+SerLCD lcd = SerLCD(5);
 // Sequencer
 EventSequence sequencer(VS1053_BANK_DRUMS1);  
 Timer timer(480, NULL, NULL, CLK_OUT);
@@ -32,8 +33,14 @@ Patch patch;
 void setup() {
   Serial.begin(9600);
   Serial.println("Hello, I have reset");
-  myserial.begin(31250);
-  sequencer.attachInterface(& myserial);
+  vs1053Serial.begin(31250);
+  lcd.begin(9600);
+//  lcd.reset();
+//  lcd.setSplash();
+  lcd.flush();
+  lcd.print("Hello, this     ");
+  lcd.print("doesn't work yet");
+  sequencer.attachInterface(& vs1053Serial);
   sequencer.writeDefaults();
   sequencer.setInstrument(VS1053_BANK_DRUMS1);
   sequencer.sequence_length = 64;
