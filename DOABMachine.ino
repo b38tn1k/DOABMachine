@@ -52,7 +52,7 @@ void setup() {
   sequencer.attachInterface(& vs1053Serial);
   sequencer.writeDefaults();
   sequencer.setInstrument(VS1053_BANK_DRUMS1);
-  sequencer.sequence_length = 64;
+  sequencer.sequence_length = 64; // max = 128, or keep it at 64?
   // Set up pads
   for (int i = 0; i < 5; i++) {
     pads[i].init(INPUT, i+9); // Pads are on pins 9 through 13
@@ -66,13 +66,15 @@ void setup() {
 }
 
 void loop() {
-  Serial.println();
   for (int i = 0; i<6; i++){
     interfaceButtons[i].checkState();
-    Serial.println(interfaceButtons[i].state);
+    if (interfaceButtons[i].triggered = true){
+      //do menu stuff here
+      //TODO: figure out menu stuff
+//      Serial.println(i);
+    }
+    
   }
-  delay(1000);
-  Serial.println();
   
   for (int i = 0; i < 5; i++) {
     pads[i].checkState();
@@ -85,7 +87,7 @@ void loop() {
   }
   if (timer.tick() == true) {
     sequencer.step();
-//    Serial.println(sequencer.current->sequenceNumber);
+    Serial.println(sequencer.current->sequenceNumber);
     //metronome for testing
     if (sequencer.current->sequenceNumber % 16 == 0 || sequencer.current->sequenceNumber == 0) {
       sequencer.playNote(31);

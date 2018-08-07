@@ -2,6 +2,7 @@
 #define EventSequence_h
 
 #define POLY 8
+#define BANK_COUNT 4
 
 #include "Instrument.h"
 
@@ -14,7 +15,7 @@ class EventSequence : public Instrument{ // could I just inherit timer also?
     // sequence step
     typedef struct stepEvent{
       uint8_t sequenceNumber;
-      uint8_t notes[2][POLY] = {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}};
+      uint8_t notes[BANK_COUNT][POLY] = {{0, 0, 0, 0, 0, 0, 0, 0}, {0, 0, 0, 0, 0, 0, 0, 0}};
       stepEvent *next;
       stepEvent *prev; // for reverse
     } stepEvent;
