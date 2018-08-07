@@ -7,9 +7,9 @@ class Button{
     void checkState();
     bool triggered;
     int tag;
+    uint8_t state;
   private:
     uint8_t pin;
-    uint8_t state;
     uint8_t defaultState;  
 };
 

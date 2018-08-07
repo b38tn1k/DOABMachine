@@ -14,18 +14,27 @@ const char patchNames[][21] PROGMEM = {"High Q","Slap","Scratch Push [EXC 7]","S
 #define VS1053_BANK_DRUMS2 0x7F
 #define VS1053_BANK_MELODY 0x79
 #define CLK_OUT 8
+#define ENTER_BUTTON 50
+#define BACK_BUTTON 48
+#define F1_BUTTON 52
+#define F2_BUTTON 53
+#define F3_BUTTON 51
+#define F4_BUTTON 44
 // Serial RX Pin for VS1053
 #define VS1053_RX  2
 SoftwareSerial vs1053Serial(0, VS1053_RX);
 // Interface
 Button pads[5];
+Button interfaceButtons[6];
+uint8_t interfaceButtonPins[6] = {ENTER_BUTTON, BACK_BUTTON, F1_BUTTON, F2_BUTTON, F3_BUTTON, F4_BUTTON};
+
 SerLCD lcd = SerLCD(5);
 // Sequencer
 EventSequence sequencer(VS1053_BANK_DRUMS1);  
 Timer timer(480, NULL, NULL, CLK_OUT);
 //Patch
 typedef struct Patch {
-  uint8_t pads[5] = {36, 35, 42, 70, 40};;
+  uint8_t pads[5] = {36, 35, 42, 70, 40};
 //  uint8_t volumes[127];
 } Patch;
 Patch patch;
@@ -49,10 +58,22 @@ void setup() {
     pads[i].init(INPUT, i+9); // Pads are on pins 9 through 13
     pads[i].tag = patch.pads[i];
   }
-  
+  //set up the interface buttons
+  for (int i = 0; i < 6; i++) {
+    interfaceButtons[i].init(INPUT_PULLUP, interfaceButtonPins[i]); // Pads are on pins 9 through 13
+    pads[i].tag = patch.pads[i];
+  }
 }
 
 void loop() {
+  Serial.println();
+  for (int i = 0; i<6; i++){
+    interfaceButtons[i].checkState();
+    Serial.println(interfaceButtons[i].state);
+  }
+  delay(1000);
+  Serial.println();
+  
   for (int i = 0; i < 5; i++) {
     pads[i].checkState();
     if (pads[i].triggered == true) {
