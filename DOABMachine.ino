@@ -20,6 +20,9 @@ const char patchNames[][21] PROGMEM = {"High Q","Slap","Scratch Push [EXC 7]","S
 #define F2_BUTTON 53
 #define F3_BUTTON 51
 #define F4_BUTTON 44
+#define REVERB_DECAY A2
+#define REVERB_LEVEL A1
+#define VOLUME A0
 // Serial RX Pin for VS1053
 #define VS1053_RX  2
 SoftwareSerial vs1053Serial(0, VS1053_RX);
@@ -31,7 +34,7 @@ uint8_t interfaceButtonPins[6] = {ENTER_BUTTON, BACK_BUTTON, F1_BUTTON, F2_BUTTO
 SerLCD lcd = SerLCD(5);
 // Sequencer
 EventSequence sequencer(VS1053_BANK_DRUMS1);  
-Timer timer(480, NULL, NULL, CLK_OUT);
+Timer timer(440, NULL, NULL, CLK_OUT);
 //Patch
 typedef struct Patch {
   uint8_t pads[5] = {36, 35, 42, 70, 40};
@@ -52,7 +55,7 @@ void setup() {
   sequencer.attachInterface(& vs1053Serial);
   sequencer.writeDefaults();
   sequencer.setInstrument(VS1053_BANK_DRUMS1);
-  sequencer.sequence_length = 64; // max = 128, or keep it at 64?
+  sequencer.sequence_length = 64; // max = 128
   // Set up pads
   for (int i = 0; i < 5; i++) {
     pads[i].init(INPUT, i+9); // Pads are on pins 9 through 13
@@ -65,26 +68,40 @@ void setup() {
   }
 }
 
+uint8_t map_pot(int pot, double maximum, bool flipped) {
+  double value = (analogRead(pot) / 1023.00) * maximum;
+  if (flipped == true) { // pots wired backwards cause I am a dummy
+    value = maximum - value;
+  }
+  return value;
+}
+
 void loop() {
+  //MENU and INTERFACE
   for (int i = 0; i<6; i++){
     interfaceButtons[i].checkState();
     if (interfaceButtons[i].triggered = true){
+      sequencer.toggleBank();
       //do menu stuff here
       //TODO: figure out menu stuff
 //      Serial.println(i);
     }
     
   }
-  
+  // REVERB AND VOLUME
+  sequencer.setReverbDecay(map_pot(REVERB_DECAY, 127, true));
+  sequencer.setReverbLevel(map_pot(REVERB_LEVEL, 127, true));
+  sequencer.setVolume(map_pot(VOLUME, 127, true));
+  // PADS
   for (int i = 0; i < 5; i++) {
     pads[i].checkState();
     if (pads[i].triggered == true) {
-//      Serial.println(i);
       sequencer.playNote(pads[i].tag);
       sequencer.addNote2CurrentStep(pads[i].tag);
       
     }
   }
+  // SEQUENCING
   if (timer.tick() == true) {
     sequencer.step();
     Serial.println(sequencer.current->sequenceNumber);
