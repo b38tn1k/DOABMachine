@@ -31,7 +31,7 @@ Button pads[5];
 Button interfaceButtons[6];
 uint8_t interfaceButtonPins[6] = {ENTER_BUTTON, BACK_BUTTON, F1_BUTTON, F2_BUTTON, F3_BUTTON, F4_BUTTON};
 
-SerLCD lcd = SerLCD(5);
+serLCD lcd = serLCD(5);
 // Sequencer
 EventSequence sequencer(VS1053_BANK_DRUMS1);  
 Timer timer(440, NULL, NULL, CLK_OUT);
@@ -46,7 +46,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Hello, I have reset");
   vs1053Serial.begin(31250);
-  lcd.begin(9600);
+  lcd.clear();
 //  lcd.reset();
 //  lcd.setSplash();
   lcd.flush();
@@ -97,14 +97,17 @@ void loop() {
     pads[i].checkState();
     if (pads[i].triggered == true) {
       sequencer.playNote(pads[i].tag);
-      sequencer.addNote2CurrentStep(pads[i].tag);
-      
+      if (timer.tock() == false) {
+        sequencer.addNote2CurrentStep(pads[i].tag);
+      } else {
+        sequencer.addNote2NextStep(pads[i].tag);
+      }
     }
   }
   // SEQUENCING
   if (timer.tick() == true) {
     sequencer.step();
-    Serial.println(sequencer.current->sequenceNumber);
+//    Serial.println(sequencer.current->sequenceNumber);
     //metronome for testing
     if (sequencer.current->sequenceNumber % 16 == 0 || sequencer.current->sequenceNumber == 0) {
       sequencer.playNote(31);
@@ -114,3 +117,4 @@ void loop() {
     }
   }
 }
+

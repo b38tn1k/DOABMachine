@@ -35,6 +35,13 @@ void EventSequence::step() {
     }
   }
   playAllNotesAtCurrentStep();
+  // add any early notes that have already played to the loop
+  for (int i = 0; i < POLY; i++) {
+    if (futureNotes[i] != 0) {
+      addNote2CurrentStep(futureNotes[i]);
+      futureNotes[i] = 0;
+    }
+  }
 }
 
 void EventSequence::toggleBank() {
@@ -50,6 +57,15 @@ void EventSequence::addNote2CurrentStep(uint8_t _note) {
     }
     if (current->notes[bank][i] == NULL) {
       current->notes[bank][i] = _note;
+      break;
+    }
+  }
+}
+
+void EventSequence::addNote2NextStep(uint8_t _note) {
+  for (int i = 0; i < POLY; i++) {
+    if (futureNotes[i] == 0) {
+      futureNotes[i] = _note;
       break;
     }
   }

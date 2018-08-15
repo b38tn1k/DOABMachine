@@ -17,6 +17,18 @@ Timer::Timer(double _bpm, uint8_t _clkTrig1, uint8_t _clkTrig2, uint8_t _clkOut)
   }
 }
 
+bool Timer::tock() {
+  bool tock = false;
+  if (useInternalCLK == true) {
+    unsigned long now = millis();
+    unsigned long currentTickDuration = now - previousMillis;
+    if (currentTickDuration > halfInterval) {
+      tock = true;
+    }
+  }
+  return tock;
+}
+
 bool Timer::tick() {
   bool tick = false;
   if (useInternalCLK == false) {
@@ -29,11 +41,12 @@ bool Timer::tick() {
     }
   } else {
     unsigned long now = millis();
-    if ((now - previousMillis) > interval) {
+    unsigned long currentTickDuration = now - previousMillis;
+    if (currentTickDuration > interval) {
       previousMillis =  now;
       clkState = ! clkState;
       tick = true;
-    }
+    } 
   }
   // send trigger out
   if (clkState == true) {
@@ -47,5 +60,6 @@ bool Timer::tick() {
 void Timer::setBPM(double _bpm) {
   bpm = _bpm;
   interval = (60000.00 * subDivision) / bpm;
+  halfInterval = interval/2 + interval/4; //for pushing beats to the next bucket instead.. timing is subjective :-P
 }
 

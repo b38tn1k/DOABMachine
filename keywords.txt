@@ -1,0 +1,36 @@
+ # keywords for the serLCD v1.7 library
+# created by Florentin SALOMEZ 18/06/2016
+
+serLCD	KEYWORD1
+
+clear	KEYWORD2
+clearLine	KEYWORD2
+home	KEYWORD2
+setBrightness	KEYWORD2
+
+setSplash	KEYWORD2
+setType	KEYWORD2
+scrollLeft	KEYWORD2
+scrollRight	KEYWORD2
+toggleSplash	KEYWORD2
+
+blink	KEYWORD2
+noBlink	KEYWORD2
+cursor	KEYWORD2
+noCursor	KEYWORD2
+display	KEYWORD2
+noDisplay	KEYWORD2
+
+setCursor	KEYWORD2
+selectLine	KEYWORD2
+
+lefToRight	KEYWORD2
+rightToLeft	KEYWORD2
+autoscroll	KEYWORD2
+noAutoscroll	KEYWORD2
+
+createChar	KEYWORD2
+printCustomChar	KEYWORD2
+
+command	KEYWORD2
+specialCommand	KEYWORD2

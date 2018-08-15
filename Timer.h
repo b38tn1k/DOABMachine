@@ -5,6 +5,7 @@ class Timer {
   public:
     Timer(double _bpm, uint8_t _clkTrig1, uint8_t _clkTrig2, uint8_t _clkOut);
     bool tick();
+    bool tock();
     void setBPM(double);
   private:
     bool useInternalCLK = true;
@@ -17,6 +18,7 @@ class Timer {
     uint8_t clkTrig2;
     uint8_t clkOut;
     unsigned long interval;
+    unsigned long halfInterval;
     unsigned long previousMillis = 0;
 };
 
