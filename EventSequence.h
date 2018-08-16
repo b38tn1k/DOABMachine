@@ -28,12 +28,13 @@ class EventSequence : public Instrument{ // could I just inherit timer also?
   public:
     uint8_t sequence_length;
     EventSequence(uint8_t MIDIbank) : Instrument(MIDIbank){bank = 0; forwards = true;}
-    void step();
+    void step(bool play);
     void toggleBank();
     stepEvent *head, *tail, *current;
     void addNote2CurrentStep(uint8_t note);
     void addNote2NextStep(uint8_t note);
     uint8_t nextStepMute[POLY] = {0, 0, 0, 0, 0};
+    void clearSeq();
 };
 
 #endif

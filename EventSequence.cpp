@@ -1,4 +1,6 @@
 #include "EventSequence.h"
+#include "Arduino.h"
+
 
 void EventSequence::addNewStepToTail(uint8_t _sequenceNumber) {
   stepEvent *temp = new stepEvent;
@@ -17,7 +19,7 @@ void EventSequence::addNewStepToTail(uint8_t _sequenceNumber) {
   temp = NULL;
 }
 
-void EventSequence::step() {
+void EventSequence::step(bool play) {
   if (current == NULL) {
     addNewStepToTail(1);
   } else {
@@ -34,12 +36,24 @@ void EventSequence::step() {
       current = head;  
     }
   }
-  playAllNotesAtCurrentStep();
+  if (play == true) {
+    playAllNotesAtCurrentStep();
+  }
   // add any early notes that have already played to the loop
   for (int i = 0; i < POLY; i++) {
     if (futureNotes[i] != 0) {
       addNote2CurrentStep(futureNotes[i]);
       futureNotes[i] = 0;
+    }
+  }
+}
+
+void EventSequence::clearSeq() {
+  Serial.println("clear");
+  for (int i = 0; i < sequence_length; i++) {
+    step(false);
+    for (int j = 0; j < POLY; j++) {
+      current->notes[bank][j] = 0;
     }
   }
 }

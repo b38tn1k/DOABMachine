@@ -21,3 +21,11 @@ void Button::checkState() {
   state = _state;
 }
 
+bool Button::isDown() {
+  uint8_t _state = digitalRead(pin);
+  if (_state == defaultState) {
+    return true;
+  }
+  return false;
+}
+

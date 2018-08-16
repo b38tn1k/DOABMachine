@@ -8,6 +8,7 @@ class Button{
     bool triggered;
     int tag;
     uint8_t state;
+    bool isDown();
   private:
     uint8_t pin;
     uint8_t defaultState;  
