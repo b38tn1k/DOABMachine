@@ -38,13 +38,13 @@ Timer timer(440, NULL, NULL, CLK_OUT);
 //Patch
 typedef struct Patch {
   uint8_t pads[5] = {36, 35, 42, 70, 40};
-//  uint8_t volumes[127];
+  uint8_t volumes[127];
 } Patch;
 Patch patch;
 
 void setup() {
   Serial.begin(9600);
-  Serial.println("Hello, I have reset");
+//  Serial.println("Hello, I have reset");
   vs1053Serial.begin(31250);
   lcd.clear();
 //  lcd.reset();
@@ -68,27 +68,21 @@ void setup() {
   }
 }
 
-uint8_t map_pot(int pot, double maximum, bool flipped) {
-  double value = (analogRead(pot) / 1023.00) * maximum;
-  if (flipped == true) { // pots wired backwards cause I am a dummy
-    value = maximum - value;
-  }
-  return value;
-}
+
 
 void loop() {
   //MENU and INTERFACE
+  
   for (int i = 0; i<6; i++){
     interfaceButtons[i].checkState();
-    if (interfaceButtons[i].triggered = true){
+    if (interfaceButtons[i].triggered == true){
       sequencer.toggleBank();
       //do menu stuff here
       //TODO: figure out menu stuff
-//      Serial.println(i);
+      Serial.println(i);
     }
-    
   }
-  // REVERB AND VOLUME
+  // REVERB AND VOLUME POTS
   sequencer.setReverbDecay(map_pot(REVERB_DECAY, 127, true));
   sequencer.setReverbLevel(map_pot(REVERB_LEVEL, 127, true));
   sequencer.setVolume(map_pot(VOLUME, 127, true));
@@ -116,5 +110,13 @@ void loop() {
       sequencer.playNote(33);
     }
   }
+}
+
+uint8_t map_pot(int pot, double maximum, bool flipped) {
+  double value = (analogRead(pot) / 1023.00) * maximum;
+  if (flipped == true) { // pots wired backwards cause I am a dummy
+    value = maximum - value;
+  }
+  return value;
 }
 
