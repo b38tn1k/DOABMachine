@@ -58,7 +58,7 @@ bool Timer::tick() {
 }
 
 void Timer::setBPM(double _bpm) {
-  bpm = _bpm;
+  bpm = _bpm * 4;
   interval = (60000.00 * subDivision) / bpm;
   halfInterval = interval/2 + interval/4; //for pushing beats to the next bucket instead.. timing is subjective :-P
 }

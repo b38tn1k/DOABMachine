@@ -53,7 +53,9 @@ void EventSequence::clearSeq() {
   for (int i = 0; i < sequence_length; i++) {
     step(false);
     for (int j = 0; j < POLY; j++) {
-      current->notes[bank][j] = 0;
+      for (int k = 0; k < BANK_COUNT; k++) {
+        current->notes[bank][j] = 0;
+      }
     }
   }
 }
@@ -87,11 +89,13 @@ void EventSequence::addNote2NextStep(uint8_t _note) {
 
 void EventSequence::playAllNotesAtCurrentStep() {
   int i;
-  for (i = 0; i < POLY; i++) {
-    if (current->notes[bank][i] == 0) {
-      break;
-    } else {
-     playNote(current->notes[bank][i]); 
+  for (int j = 0; j < BANK_COUNT; j++) {
+    for (i = 0; i < POLY; i++) {
+      if (current->notes[j][i] == 0) {
+        break;
+      } else {
+       playNote(current->notes[j][i]); 
+      }
     }
   }
 }
