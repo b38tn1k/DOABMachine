@@ -2,42 +2,37 @@
 #include "Instrument.h"
 #include "MMInterface.h"
 
-void Instrument::setReverbLevel(uint8_t _reverbLevel){
+void Instrument::setReverbLevel(uint8_t chan, uint8_t _reverbLevel){
   reverbLevel = _reverbLevel;
-  midiSetChannelReverb(channel, reverbDecay, reverbLevel);
+  midiSetChannelReverb(chan, reverbDecay, reverbLevel);
 }
 
-void Instrument::setReverbDecay(uint8_t _reverbDecay){
+void Instrument::setReverbDecay(uint8_t chan, uint8_t _reverbDecay){
   reverbDecay = _reverbDecay;
-  midiSetChannelReverb(channel, reverbDecay, reverbLevel);
+  midiSetChannelReverb(chan, reverbDecay, reverbLevel);
 }
 
-void Instrument::setVolume(uint8_t _volume){
+void Instrument::setVolume(uint8_t chan, uint8_t _volume){
   volume = _volume;
-  midiSetChannelVolume(channel, volume);
+  midiSetChannelVolume(chan, volume);
 }
 
-void Instrument::setInstrument(uint8_t _instrument){
+void Instrument::setInstrument(uint8_t chan, uint8_t _instrument){
   instrument = _instrument;
-  midiSetInstrument(channel, instrument);
+  midiSetInstrument(chan, instrument);
 }
 
-void Instrument::setBank(uint8_t _bank){
+void Instrument::setBank(uint8_t chan, uint8_t _bank){
   bank = _bank;
-  midiSetChannelBank(channel, bank);
+  midiSetChannelBank(chan, bank);
 }
 
-void Instrument::setChannel(uint8_t _channel){
-  channel = _channel;
-  midiSetChannelBank(channel, bank);
+void Instrument::playNote(uint8_t chan, uint8_t note) {
+  midiNoteOn(chan, note, velocity);
 }
 
-void Instrument::playNote(uint8_t note) {
-  midiNoteOn(channel, note, velocity);
-}
-
-void Instrument::stopNote(uint8_t note) {
-  midiNoteOff(channel, note, velocity);
+void Instrument::stopNote(uint8_t chan, uint8_t note) {
+  midiNoteOff(chan, note, velocity);
 }
 
 void Instrument::writeDefaults() {

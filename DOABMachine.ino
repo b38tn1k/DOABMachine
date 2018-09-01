@@ -65,7 +65,7 @@ const char patchNames[][21] PROGMEM = {"High Q","Slap","Scratch Push [EXC 7]","S
 
 // Variables
 int bpm = 120;
-uint8_t bank = 0;
+uint8_t channel = 0;
 
 // Objects
 Button pads[5];
@@ -77,7 +77,7 @@ Encoder menuEncoder(21, 22, 23);
 
 
 serLCD lcd = serLCD(5);
-EventSequence sequencer(VS1053_BANK_DRUMS1);
+EventSequence sequencer = EventSequence();
 Timer timer(bpm, NULL, NULL, CLK_OUT);
 SoftwareSerial vs1053Serial(0, VS1053_RX);
 typedef struct Patch {
@@ -96,17 +96,22 @@ void setup() {
   // Sequencer Setup
   sequencer.attachInterface(& vs1053Serial);
   sequencer.writeDefaults();
-  sequencer.setInstrument(VS1053_BANK_DRUMS1);
+  sequencer.midiSetChannelBank(3, VS1053_BANK_DRUMS1);
+  sequencer.setInstrument(3, VS1053_BANK_DRUMS1);
+  sequencer.midiSetChannelBank(2, VS1053_BANK_DRUMS1);
+  sequencer.setInstrument(2, VS1053_BANK_DRUMS1);
+  sequencer.midiSetChannelBank(1, VS1053_BANK_MELODY);
+  sequencer.midiSetChannelBank(0, VS1053_BANK_MELODY);
   sequencer.sequence_length = 64; // max = 128, may change when Stop Notes required
   // Set up pads
   for (int i = 0; i < 5; i++) {
     pads[i].init(INPUT, i+9); // Pads are on pins 9 through 13
-    pads[i].tag = patch.pads[bank][i];
+    pads[i].tag = patch.pads[channel][i];
   }
   //set up the interface buttons
   for (int i = 0; i < 6; i++) {
     interfaceButtons[i].init(INPUT_PULLUP, interfaceButtonPins[i]); // Pads are on pins 9 through 13
-    pads[i].tag = patch.pads[bank][i];
+    pads[i].tag = patch.pads[channel][i];
     interfaceButtons[i].checkState();
   }
   // Encoders
@@ -175,29 +180,31 @@ void loop() {
   lcd.print("BPM: ");
   lcd.print(bpm);
 //  lcd.setCursor(2, 8);
-  lcd.print(" BANK: ");
-  lcd.print(bank + 1);  //OBOE
+  lcd.print(" CHAN: ");
+  lcd.print(channel + 1);  //OBOE
   // Check all the buttons
   for (int i = 0; i<6; i++){
     interfaceButtons[i].checkState();
   }
   // Update Values
   // REVERB AND VOLUME POTS
-  sequencer.setReverbDecay(map_pot(REVERB_DECAY, 127, true));
-  sequencer.setReverbLevel(map_pot(REVERB_LEVEL, 127, true));
-  sequencer.setVolume(map_pot(VOLUME, 127, true));
+  sequencer.setReverbDecay(channel, map_pot(REVERB_DECAY, 127, true));
+  sequencer.setReverbLevel(channel, map_pot(REVERB_LEVEL, 127, true));
+  sequencer.setVolume(channel, map_pot(VOLUME, 127, true));
   // Select Active Bank
   for (int i = 2; i < 6; i++) {
     if (interfaceButtons[i].triggered == true) {
-      bank = i - 2;
+      channel = i - 2;
+      sequencer.channel = channel;
     }
   }
+  
   // PADS
   for (int i = 0; i < 5; i++) {
     pads[i].checkState();
     if (pads[i].triggered == true) {
 //      Serial.println(i);
-      sequencer.playNote(pads[i].tag);
+      sequencer.playNote(channel, pads[i].tag);
       if (timer.tock() == false) {
         sequencer.addNote2CurrentStep(pads[i].tag);
       } else {
@@ -205,9 +212,9 @@ void loop() {
       }
     }
   }
-  // if bank changes the pads will be updated
+  // if channel changes the pads will be updated
   for (int i = 0; i < 6; i++) {
-    pads[i].tag = patch.pads[bank][i];
+    pads[i].tag = patch.pads[channel][i];
   }
   // SEQUENCING
   if (timer.tick() == true) {
@@ -215,10 +222,10 @@ void loop() {
 //    Serial.println(sequencer.current->sequenceNumber);
     //metronome for testing
     if (sequencer.current->sequenceNumber % 16 == 0 || sequencer.current->sequenceNumber == 0) {
-      sequencer.playNote(31);
+      sequencer.playNote(3, 31);
     }
     if (sequencer.current->sequenceNumber % 4 == 0) {
-      sequencer.playNote(33);
+      sequencer.playNote(3, 33);
     }
   }
 }
