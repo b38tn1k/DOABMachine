@@ -71,8 +71,8 @@ uint8_t bank = 0;
 Button pads[5];
 Button interfaceButtons[6];
 uint8_t interfaceButtonPins[6] = {ENTER_BUTTON, BACK_BUTTON, F1_BUTTON, F2_BUTTON, F3_BUTTON, F4_BUTTON};
-Encoder f1Encoder(22, 24, 26);
-Encoder f2Encoder(28, 30, 32);
+Encoder f1Encoder(19, 24, 25); // check these pins, check the encoders, ehhhhh
+Encoder f2Encoder(18, 28, 29);
 Encoder menuEncoder(21, 22, 23);
 
 
@@ -111,11 +111,14 @@ void setup() {
   }
   // Encoders
   menuEncoder.init();
+  f1Encoder.init();
+  f2Encoder.init();
   attachInterrupt(digitalPinToInterrupt(menuEncoder.interruptPin), updateMenuEncoder, CHANGE);
-//  f1Encoder.init();
-//  f2Encoder.init();
+  attachInterrupt(digitalPinToInterrupt(f1Encoder.interruptPin), updateF1Encoder, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(f2Encoder.interruptPin), updateF2Encoder, CHANGE);
 }
 
+// these encoder interrupts probably effect the timer but isnt noticable (yet)
 void updateMenuEncoder() {
   int state = digitalRead(menuEncoder.clk);
   if (state != menuEncoder.previous) {
@@ -128,12 +131,36 @@ void updateMenuEncoder() {
   menuEncoder.previous = state;
 }
 
+void updateF1Encoder() {
+  int state = digitalRead(f1Encoder.clk);
+  if (state != f1Encoder.previous) {
+    if (digitalRead(f1Encoder.dt) != state) {
+      f1Encoder.counter--;
+    } else {
+      f1Encoder.counter++;
+    }
+  }
+  f1Encoder.previous = state;
+}
+
+void updateF2Encoder() {
+  int state = digitalRead(f2Encoder.clk);
+  if (state != f2Encoder.previous) {
+    if (digitalRead(f2Encoder.dt) != state) {
+      f2Encoder.counter--;
+    } else {
+      f2Encoder.counter++;
+    }
+  }
+  f2Encoder.previous = state;
+}
+
+
+
 void loop() {
   Serial.println(menuEncoder.counter);
-  lcd.setCursor(1, 1);
-  lcd.print(menuEncoder.counter);
-//  f1Encoder.update();
-//  f2Encoder.update();
+//  Serial.println(f1Encoder.counter);
+//  Serial.println(f2Encoder.counter);
   //MENU and INTERFACE
   // Draw Menu & other Items to Scren
   lcd.setCursor(2, 1);
