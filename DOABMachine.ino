@@ -158,7 +158,15 @@ void updateF2Encoder() {
 
 
 void loop() {
-  Serial.println(menuEncoder.counter);
+//  Serial.println(menuEncoder.counter);
+  menuEncoder.update();
+  if (menuEncoder.tickUp == true) {
+    Serial.println("Up");
+  }
+  if (menuEncoder.tickDown == true) {
+    Serial.println("Down");
+  }
+  
 //  Serial.println(f1Encoder.counter);
 //  Serial.println(f2Encoder.counter);
   //MENU and INTERFACE
