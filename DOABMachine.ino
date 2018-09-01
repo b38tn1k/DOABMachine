@@ -5,6 +5,8 @@
 #include "Timer.h"
 #include "Button.h"
 #include "MMInterface.h"
+#include "Encoder.h"
+
 
 /*              
  *               / EDIT  - EDIT()
@@ -69,6 +71,11 @@ uint8_t bank = 0;
 Button pads[5];
 Button interfaceButtons[6];
 uint8_t interfaceButtonPins[6] = {ENTER_BUTTON, BACK_BUTTON, F1_BUTTON, F2_BUTTON, F3_BUTTON, F4_BUTTON};
+Encoder f1Encoder(22, 24, 26);
+Encoder f2Encoder(28, 30, 32);
+Encoder menuEncoder(31, 33, 35);
+
+
 serLCD lcd = serLCD(5);
 EventSequence sequencer(VS1053_BANK_DRUMS1);
 Timer timer(bpm, NULL, NULL, CLK_OUT);
