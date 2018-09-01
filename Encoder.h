@@ -11,10 +11,8 @@ class Encoder{
     int getValue();
     void update();
     Button sw;
-    
-  private:
-    int _sw, dt, clk;
- 
+    volatile int counter =0, previous;
+    int interruptPin, _sw, dt, clk;
 };
 
 #endif

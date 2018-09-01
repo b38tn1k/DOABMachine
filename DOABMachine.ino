@@ -73,7 +73,7 @@ Button interfaceButtons[6];
 uint8_t interfaceButtonPins[6] = {ENTER_BUTTON, BACK_BUTTON, F1_BUTTON, F2_BUTTON, F3_BUTTON, F4_BUTTON};
 Encoder f1Encoder(22, 24, 26);
 Encoder f2Encoder(28, 30, 32);
-Encoder menuEncoder(31, 33, 35);
+Encoder menuEncoder(21, 22, 23);
 
 
 serLCD lcd = serLCD(5);
@@ -89,6 +89,7 @@ Patch patch;
 void setup() {
   // Serial comms
   Serial.begin(9600);
+  Serial.println("Hello");
   vs1053Serial.begin(31250);
   lcd.clear();
   lcd.home();
@@ -108,9 +109,31 @@ void setup() {
     pads[i].tag = patch.pads[bank][i];
     interfaceButtons[i].checkState();
   }
+  // Encoders
+  menuEncoder.init();
+  attachInterrupt(digitalPinToInterrupt(menuEncoder.interruptPin), updateMenuEncoder, CHANGE);
+//  f1Encoder.init();
+//  f2Encoder.init();
+}
+
+void updateMenuEncoder() {
+  int state = digitalRead(menuEncoder.clk);
+  if (state != menuEncoder.previous) {
+    if (digitalRead(menuEncoder.dt) != state) {
+      menuEncoder.counter--;
+    } else {
+      menuEncoder.counter++;
+    }
+  }
+  menuEncoder.previous = state;
 }
 
 void loop() {
+  Serial.println(menuEncoder.counter);
+  lcd.setCursor(1, 1);
+  lcd.print(menuEncoder.counter);
+//  f1Encoder.update();
+//  f2Encoder.update();
   //MENU and INTERFACE
   // Draw Menu & other Items to Scren
   lcd.setCursor(2, 1);
@@ -122,10 +145,6 @@ void loop() {
   // Check all the buttons
   for (int i = 0; i<6; i++){
     interfaceButtons[i].checkState();
-  }
-  //TEMP
-  if (interfaceButtons[OK].triggered == true) {
-    sequencer.clearSeq();
   }
   // Update Values
   // REVERB AND VOLUME POTS
@@ -142,6 +161,7 @@ void loop() {
   for (int i = 0; i < 5; i++) {
     pads[i].checkState();
     if (pads[i].triggered == true) {
+//      Serial.println(i);
       sequencer.playNote(pads[i].tag);
       if (timer.tock() == false) {
         sequencer.addNote2CurrentStep(pads[i].tag);
