@@ -34,7 +34,8 @@
  */
 
 // Patch names for every drum sound
-const char patchNames[][21] PROGMEM = {"High Q","Slap","Scratch Push [EXC 7]","Scratch Pull [EXC 7]","Sticks","Square Click","Metronome Click","Metronome Bell","Acoustic Bass Drum","Bass Drum 1","Side Stick","Acoustic Snare","Hand Clap","Electric Snare","Low Floor Tom","Closed Hi-hat [EXC 1]","High Floor Tom","Pedal Hi-hat [EXC 1]","Low Tom","Open Hi-hat [EXC 1]","Low-Mid Tom","High Mid Tom","Crash Cymbal 1","High Tom","Ride Cymbal 1","Chinese Cymbal","Ride Bell","Tambourine","Splash Cymbal","Cowbell","Crash Cymbal 2","Vibra-slap","Ride Cymbal 2","High Bongo","Low Bongo","Mute Hi Conga","Open Hi Conga","Low Conga","High Timbale","Low Timbale","High Agogo","Low Agogo","Cabasa","Maracas","Short Whistle [EXC 2]","Long Whistle [EXC 2]","Short Guiro [EXC 3]","Long Guiro [EXC 3]","Claves","Hi Wood Block","Low Wood Block","Mute Cuica [EXC 4]","Open Cuica [EXC 4]","Mute Triangle [EXC 5]","Open Triangle [EXC 5]","Shaker","Jingle bell","Bell tree","Castanets","Mute Surdo [EXC 6]","Open Surdo [EXC 6]"};
+const char drumNames[][21] PROGMEM = {"High Q","Slap","Scratch Push [EXC 7]","Scratch Pull [EXC 7]","Sticks","Square Click","Metronome Click","Metronome Bell","Acoustic Bass Drum","Bass Drum 1","Side Stick","Acoustic Snare","Hand Clap","Electric Snare","Low Floor Tom","Closed Hi-hat [EXC 1]","High Floor Tom","Pedal Hi-hat [EXC 1]","Low Tom","Open Hi-hat [EXC 1]","Low-Mid Tom","High Mid Tom","Crash Cymbal 1","High Tom","Ride Cymbal 1","Chinese Cymbal","Ride Bell","Tambourine","Splash Cymbal","Cowbell","Crash Cymbal 2","Vibra-slap","Ride Cymbal 2","High Bongo","Low Bongo","Mute Hi Conga","Open Hi Conga","Low Conga","High Timbale","Low Timbale","High Agogo","Low Agogo","Cabasa","Maracas","Short Whistle [EXC 2]","Long Whistle [EXC 2]","Short Guiro [EXC 3]","Long Guiro [EXC 3]","Claves","Hi Wood Block","Low Wood Block","Mute Cuica [EXC 4]","Open Cuica [EXC 4]","Mute Triangle [EXC 5]","Open Triangle [EXC 5]","Shaker","Jingle bell","Bell tree","Castanets","Mute Surdo [EXC 6]","Open Surdo [EXC 6]"};
+const char patchNames[][127] PROGMEM = {"Acoustic Grand Piano","Bright Acoustic Piano","Electric Grand Piano","Honky-tonk Piano","Electric Piano 1","Electric Piano 2","Harpsichord","Clavi","Celesta","Glockenspiel","Music Box","Vibraphone","Marimba","Xylophone","Tubular Bells","Dulcimer","Drawbar Organ","Percussive Organ","Rock Organ","Church Organ","Reed Organ","Accordion","Harmonica","Tango Accordion","Acoustic Guitar (nylon)","Acoustic Guitar (steel)","Electric Guitar (jazz)","Electric Guitar (clean)","Electric Guitar (muted)","Overdriven Guitar","Distortion Guitar","Guitar Harmonics","Acoustic Bass","Electric Bass (finger)","Electric Bass (pick)","Fretless Bass","Slap Bass 1","Slap Bass 2","Synth Bass 1","Synth Bass 2","Violin","Viola","Cello","Contrabass","Tremolo Strings","Pizzicato Strings","Orchestral Harp","Timpani","String Ensembles 1","String Ensembles 2","Synth Strings 1","Synth Strings 2","Choir Aahs","Voice Oohs","Synth Voice","Orchestra Hit","Trumpet","Trombone","Tuba","Muted Trumpet","French Horn","Brass Section","Synth Brass 1","Synth Brass 2","Soprano Sax","Alto Sax","Tenor Sax","Baritone Sax","Oboe","English Horn","Bassoon","Clarinet","Piccolo","Flute","Recorder","Pan Flute","Blown Bottle","Shakuhachi","Whistle","Ocarina","Square Lead (Lead 1)","Saw Lead (Lead)","Calliope Lead (Lead 3)","Chiff Lead (Lead 4)","Charang Lead (Lead 5)","Voice Lead (Lead 6)","Fifths Lead (Lead 7)","Bass + Lead (Lead 8)","New Age (Pad 1)","Warm Pad (Pad 2)","Polysynth (Pad 3)","Choir (Pad 4)","Bowed (Pad 5)","Metallic (Pad 6)","Halo (Pad 7)","Sweep (Pad 8)","Rain (FX 1)","Sound Track (FX 2)","Crystal (FX 3)","Atmosphere (FX 4)","Brightness (FX 5)","Goblins (FX 6)","Echoes (FX 7)","Sci-fi (FX 8)","Sitar","Banjo","Shamisen","Koto","Kalimba","Bag Pipe","Fiddle","Shanai","Tinkle Bell","Agogo","Pitched Percussion","Woodblock","Taiko Drum","Melodic Tom","Synth Drum","Reverse Cymbal","Guitar Fret Noise","Breath Noise","Seashore","Bird Tweet","Telephone Ring","Helicopter","Applause","Gunshot"};
 // Midi Message Constants
 #define VS1053_BANK_DEFAULT 0x00
 #define VS1053_BANK_DRUMS1 0x78
@@ -81,7 +82,7 @@ EventSequence sequencer = EventSequence();
 Timer timer(bpm, NULL, NULL, CLK_OUT);
 SoftwareSerial vs1053Serial(0, VS1053_RX);
 typedef struct Patch {
-  uint8_t pads[4][5] = {{36, 35, 42, 70, 40}, {36, 35, 42, 70, 40}, {36, 35, 42, 70, 40},{36, 35, 42, 70, 40}};
+  uint8_t pads[4][5] = {{35, 38, 40, 43, 48}, {35, 38, 40, 43, 48}, {36, 35, 42, 70, 40},{36, 35, 42, 70, 40}};
   uint8_t volumes[127];
 } Patch;
 Patch patch;
@@ -98,10 +99,16 @@ void setup() {
   sequencer.writeDefaults();
   sequencer.midiSetChannelBank(3, VS1053_BANK_DRUMS1);
   sequencer.setInstrument(3, VS1053_BANK_DRUMS1);
-  sequencer.midiSetChannelBank(2, VS1053_BANK_DRUMS1);
-  sequencer.setInstrument(2, VS1053_BANK_DRUMS1);
+  
+  sequencer.midiSetChannelBank(2, VS1053_BANK_DRUMS2);
+  sequencer.setInstrument(2, VS1053_BANK_DRUMS2);
+  
   sequencer.midiSetChannelBank(1, VS1053_BANK_MELODY);
+  sequencer.setInstrument(1, 92);
+  
   sequencer.midiSetChannelBank(0, VS1053_BANK_MELODY);
+  sequencer.setInstrument(0, 55);
+  
   sequencer.sequence_length = 64; // max = 128, may change when Stop Notes required
   // Set up pads
   for (int i = 0; i < 5; i++) {
